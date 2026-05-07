@@ -26,7 +26,7 @@ int menuFunciones(){
     printf("1.-Buscar\n");
     printf("2.-Contar\n");
     printf("3.-Remplazar\n");
-    printf("3.-Ordenar\n");
+    printf("4.-Ordenar\n");
     printf("0: Regresar al menu principal\n");
     scanf("%d",&op2);
     return op2;
@@ -134,20 +134,19 @@ void eliminarTodos(struct Dato **ptr){
 
 }
 
-void contar(struct Dato *ptr) {
+int contar(struct Dato *ptr) {
     struct Dato *ptrAux;
     int cont = 0;
 
     if (ptr == NULL) {
-        printf("No hay nodos\n");
+        return 0;
     } else {
         ptrAux = ptr;
         while (ptrAux != NULL) {
-            printf(" %d -> ", ptrAux->d);
             cont++;
             ptrAux = ptrAux->ptrSig;
         }
-        printf("\nTotal de nodos: %d\n", cont);
+        return cont;
     }
 }
 
@@ -193,6 +192,22 @@ void remplazar(struct Dato *ptr) {
     printf("Ingrese el nuevo dato: ");
     scanf("%d", &datoNuevo);
 
+    if (total == 1) {
+        ptrAux = ptr;
+
+        while (ptrAux != NULL) {
+
+            if (ptrAux->d == datoViejo) {
+                ptrAux->d = datoNuevo;
+                printf("Dato reemplazado\n");
+                return;
+            }
+
+            ptrAux = ptrAux->ptrSig;
+        }
+    }
+
+
     printf("Desea reemplazar:\n");
     printf("1) Todas las coincidencias\n");
     printf("2) Solo una posicion especifica\n");
@@ -235,9 +250,62 @@ void remplazar(struct Dato *ptr) {
     }
 }
 
+void ordenar(struct Dato **ptr){
+    struct Dato *ptrAux;
+    struct Dato *ptrTemp;
+    struct Dato *ptrAnt;
+    int n, cambio;
+
+    if(*ptr == NULL || (*ptr)->ptrSig == NULL){
+        printf("Nada que ordenar\n");
+        return;
+    }
+
+    n = contar(*ptr);
+
+    for(int i = 0; i < n - 1; i++){
+
+        cambio = 0;
+        ptrAux = *ptr;
+        ptrAnt = NULL;
+
+        while(ptrAux != NULL && ptrAux->ptrSig != NULL){
+
+            ptrTemp = ptrAux->ptrSig;
+
+            if(ptrAux->d > ptrTemp->d){
+
+                // Cambio en cabeza
+                if(ptrAnt == NULL){
+                    *ptr = ptrTemp;
+                }else{
+                    ptrAnt->ptrSig = ptrTemp;
+                }
+
+                ptrAux->ptrSig = ptrTemp->ptrSig;
+                ptrTemp->ptrSig = ptrAux;
+
+                ptrAnt = ptrTemp;
+
+                cambio = 1;
+
+            }else{
+                ptrAnt = ptrAux;
+                ptrAux = ptrAux->ptrSig;
+            }
+        }
+
+        if(cambio == 0){
+            break;
+        }
+    }
+
+    printf("Lista ordenada\n");
+}
+
 int main(){
     struct Dato *ptr=NULL, *ptrTemp=NULL, *ptrAux=NULL;
-    int op,valor,veces,busc,op2=0;
+    int op,valor,veces,busc,cont,op2=0;
 
     do{
         op=menu();
@@ -264,11 +332,16 @@ int main(){
                             break;
 
                          case 2: 
-                            contar(ptr);
+                            cont=contar(ptr);
+                            printf("\nTotal de nodos: %d\n", cont);
                             break;
 
                         case 3:
                             remplazar(ptr);
+                            break;
+
+                        case 4:
+                            ordenar(&ptr);
                             break;
 
                         case 0:
