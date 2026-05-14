@@ -37,6 +37,32 @@ struct Dato *nuevoDato(void){
     }
 }
 
+void eliminar(struct Dato **ptr){
+     struct Dato *ptrAux;
+
+    if(*ptr == NULL){
+        printf("No hay nodos\n");
+        return;
+      }
+
+     if((*ptr)->ptrSig == *ptr){
+        free(*ptr);
+        *ptr = NULL;
+        }else{
+
+            (*ptr)->ptrAnt->ptrSig=NULL;
+            
+             while(*ptr != NULL){
+                ptrAux = *ptr;
+                *ptr=(*ptr)->ptrSig;
+                free(ptrAux);
+        }
+
+        }
+         *ptr= NULL;
+    printf("Nodos eliminados\n");
+                
+}
 
 int main(){
     struct Dato *ptr=NULL, *ptrNew=NULL, *ptrUlt=NULL,*ptrTemp=NULL, *ptrAux=NULL;
@@ -109,6 +135,7 @@ int main(){
                 break;
 
             case 0:
+                eliminar(&ptr);
                 printf("SALIENDO...\n");
                 break;
 
